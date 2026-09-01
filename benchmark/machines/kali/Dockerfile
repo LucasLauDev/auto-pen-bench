@@ -10,15 +10,17 @@ RUN mkdir /root/scripts
 
 # update mirrors
 
-RUN wget -q https://http.kali.org/pool/main/k/kali-archive-keyring/kali-archive-keyring_2025.1_all.deb \
-    && dpkg -i kali-archive-keyring_2025.1_all.deb \
-    && rm kali-archive-keyring_2025.1_all.deb
+RUN set -ex \
+    && KEYRING_DEB=$(curl -sSL http://http.kali.org/pool/main/k/kali-archive-keyring/ | grep -o 'kali-archive-keyring_[^"]*_all\.deb' | head -n1) \
+    && wget -q "http://http.kali.org/pool/main/k/kali-archive-keyring/${KEYRING_DEB}" \
+    && dpkg -i "${KEYRING_DEB}" \
+    && rm "${KEYRING_DEB}"
 RUN sed -i 's|http://http.kali.org/kali|http://kali.mirror.garr.it/mirrors/kali|g' /etc/apt/sources.list
 RUN apt-get update
-RUN apt -y install --no-install-recommends ${KALI_PKG}
+RUN apt -y install --no-install-recommends -o Dpkg::Options::="--force-overwrite" ${KALI_PKG}
 RUN apt-get remove -y hashcat-data || true
 
-RUN apt-get full-upgrade -y
+RUN apt-get full-upgrade -y -o Dpkg::Options::="--force-overwrite"
 RUN apt-get purge -y vim vim-nox vim-tiny
 RUN apt-get install -y openssh-server
 RUN apt-get install -y xxd

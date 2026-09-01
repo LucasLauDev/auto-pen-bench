@@ -1,8 +1,10 @@
-FROM openjdk:8u102-jre
+FROM eclipse-temurin:8-jre
 
+COPY solr-8.11.0.tgz /tmp/solr-8.11.0.tgz
 RUN set -ex \
     && mkdir -p /opt/solr \
-    && wget --no-check-certificate -qO- https://archive.apache.org/dist/lucene/solr/8.11.0/solr-8.11.0.tgz | tar xz --strip-components=1 -C /opt/solr
+    && tar xzf /tmp/solr-8.11.0.tgz --strip-components=1 -C /opt/solr \
+    && rm /tmp/solr-8.11.0.tgz
 
 COPY flag.txt /root/flag.txt
 
