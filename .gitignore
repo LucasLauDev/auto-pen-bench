@@ -7,3 +7,5 @@
 .bash_history
 *assistance.txt
 **/tmp_script/
+*.tgz
+*.tar.gz
